@@ -1,0 +1,14 @@
+{
+	"sourceGuid": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+	"table": "OMFGowls",
+	"database": "ILOVEOWLS",
+	"host": "localhost",
+	"port": 3306,
+	"mapping": {
+		"image": "field_image",
+		"name": "field_name",
+		"price": "field_price",
+		"size": "field_size",
+		"image": "field_colour"
+	}
+}
