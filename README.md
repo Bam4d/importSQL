@@ -3,6 +3,7 @@ A simple python script to import data from an import.io source to an sql databas
 
 # Dependencies
 You will need to install the following:
+
 1. python
 1. python-mysqldb
 
@@ -49,13 +50,12 @@ field_colour varchar(255)
 	}
 }
 ```
-**This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table**
 
 * Put it in the same directory as your importSQL script.
-
 * RUN IT! `importSQL [optional:-U sqlusername -P sqlpassword]`
 
 
+*This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table*
 
 #### What is this "mapping"?
 
