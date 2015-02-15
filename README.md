@@ -6,6 +6,7 @@ You will need to install the following:
 
 1. python
 1. python-mysqldb
+1. python-urllib2
 
 ## Running it
 
@@ -17,7 +18,7 @@ mysql>
 
 ```
 CREATE DATABASE ILOVEOWLS;
-USE DATABASE ILOVEOWLS;
+USE ILOVEOWLS;
 
 CREATE TABLE OMFGowls
 (
@@ -32,15 +33,27 @@ field_colour varchar(255)
 
 ### 1. Using a config script 
 
+* Using this option you can set up a configuration that you can set up once and re-use to get the latest data into yours database table
+
+* Make sure you know your [import.io user credentials](https://import.io/data/account/)
+
 * Create a config.json file that follows this pattern:
 
 ```
 {
-	"sourceGuid": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+	// Config for import.io
+	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+	"ioUserID": "[your User ID]",
+	"ioAPIKey": "[your API key]",
+
+	// Config for mysql
 	"table": "OMFGowls",
 	"database": "ILOVEOWLS",
 	"host": "localhost",
 	"port": 3306,
+	"username": "root",
+	"password": "root",
+ 
 	"mapping": {
 		"image": "field_image",
 		"name": "field_name",
@@ -52,8 +65,7 @@ field_colour varchar(255)
 ```
 
 * Put it in the same directory as your importSQL script.
-* RUN IT! `importSQL [optional:-U sqlusername -P sqlpassword]`
-
+* RUN IT! `importSQL [optional:-U [sql username] -P [sql password] -u [io user ID] -p [io API key]]`
 
 *This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table*
 

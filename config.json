@@ -1,7 +1,11 @@
 {
-	"sourceGuid": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+	"ioUserUUID": "[your user guid]",
+	"ioApiKey": "[your apikey]",
 	"table": "OMFGowls",
 	"database": "ILOVEOWLS",
+	"username": "root",
+	"password": "root",
 	"host": "localhost",
 	"port": 3306,
 	"mapping": {
