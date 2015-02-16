@@ -79,9 +79,25 @@ This mapping script simply converts the data in the import.io columns to the fie
 	"name": "field_name",
 	"price": "field_price",
 	"size": "field_size",
-	"image": "field_colour"
+	"colour": "field_colour"
 }
 ```
 
 
-### 2. Using commandline properties
+### 2. Using commandline options
+
+* When using just commandline options, be aware the the script will assume that the column names from import.io match the columns names in mysql
+
+Here are the list of commandline options you can use:
+
+* *-U* mysql username -(default: root)-
+* *-P* mysql password -(default: root)-
+* *-H* mysql host name -(default: localhost)-
+* *-E* mysql port number -(default: 3306)-
+* *-t* mysql table name
+* *-d* mysql database name
+
+* *-u* import.io userID
+* *-p* import.io APIKey
+* *-s* import.io source UUID
+* *-t* mysql password

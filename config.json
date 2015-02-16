@@ -1,5 +1,6 @@
 {
 	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+	"inputUrl": "http://owlkingdom.com",
 	"ioUserUUID": "[your user guid]",
 	"ioApiKey": "[your apikey]",
 	"table": "OMFGowls",
@@ -13,6 +14,6 @@
 		"name": "field_name",
 		"price": "field_price",
 		"size": "field_size",
-		"image": "field_colour"
+		"colour": "field_colour"
 	}
 }
