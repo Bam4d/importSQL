@@ -1,5 +1,5 @@
-# importSQL *** work in progress, don't hate me ***
-A simple python script to import data from an import.io source to an sql database
+# importSQL
+A simple python script to import data from an import.io extractor to an SQL database
 
 # Dependencies
 You will need to install the following:
@@ -90,14 +90,14 @@ This mapping script simply converts the data in the import.io columns to the fie
 
 Here are the list of commandline options you can use:
 
-* *-U* mysql username -(default: root)-
-* *-P* mysql password -(default: root)-
-* *-H* mysql host name -(default: localhost)-
-* *-E* mysql port number -(default: 3306)-
-* *-t* mysql table name
-* *-d* mysql database name
+* **-U** mysql username _(default: root)_
+* **-P** mysql password _(default: root)_
+* **-H** mysql host name _(default: localhost)_
+* **-E** mysql port number _(default: 3306)_
+* **-t** mysql table name
+* **-d** mysql database name
 
-* *-u* import.io userID
-* *-p* import.io APIKey
-* *-s* import.io source UUID
-* *-t* mysql password
+* **-u** import.io userID
+* **-p** import.io APIKey
+* **-s** source UUID
+* **-i** imput url for data source
