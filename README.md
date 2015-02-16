@@ -1,5 +1,5 @@
 # importSQL
-A simple python script to import data from an import.io extractor to an SQL database
+A configurable and re-usable python script to import data from an import.io extractor to an SQL database
 
 # Dependencies
 You will need to install the following:
