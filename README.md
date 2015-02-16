@@ -43,6 +43,7 @@ field_colour varchar(255)
 {
 	// Config for import.io
 	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+	"inputUrl": "http://owlkingdom.com",
 	"ioUserID": "[your User ID]",
 	"ioAPIKey": "[your API key]",
 

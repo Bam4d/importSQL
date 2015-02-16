@@ -3,12 +3,14 @@
 	"inputUrl": "http://owlkingdom.com",
 	"ioUserUUID": "[your user guid]",
 	"ioApiKey": "[your apikey]",
+
 	"table": "OMFGowls",
 	"database": "ILOVEOWLS",
 	"username": "root",
 	"password": "root",
 	"host": "localhost",
 	"port": 3306,
+	
 	"mapping": {
 		"image": "field_image",
 		"name": "field_name",

@@ -43,15 +43,15 @@ def getConfigOptions(options, configData):
 
 	return configData
 
+# Grab the data from import.io
 def importRESTQuery(sourceUUID, inputUrl, ioUserID, ioAPIKey):
-
 	urlParams = urllib.urlencode({"input/webpage/url": inputUrl, "_user": ioUserID, "_apikey": ioAPIKey})
 	url = 'http://api.import.io/store/data/' + sourceUUID + '/_query?' + urlParams
-	print url
 
 	response = urllib2.urlopen(url).read()
 	return json.loads(response)["results"];
 
+# Convert the data to a reasonable format and stick it in SQL
 def pushToSQL(configData, results):
 
 	fieldMappings = configData["mapping"]
