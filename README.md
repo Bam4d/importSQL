@@ -5,8 +5,8 @@ A configurable and re-usable python script to import data from an import.io extr
 You will need to install the following:
 
 1. python
-1. python-mysqldb
-1. python-urllib2
+1. python-mysqldb (used as an sql client only)
+
 
 ## Running it
 
