@@ -6,6 +6,7 @@ You will need to install the following:
 
 1. python
 1. python-mysqldb (used as an sql client only)
+1. A running SQL server (SQLlite, MySQL etc...)
 
 
 ## Running it
