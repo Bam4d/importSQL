@@ -1,12 +1,13 @@
 # importSQL
-A simple python script to import data from an import.io extractor to an SQL database
+A configurable and re-usable python script to import data from an import.io extractor into an SQL database
 
 # Dependencies
 You will need to install the following:
 
 1. python
-1. python-mysqldb
-1. python-urllib2
+1. python-mysqldb (used as an sql client only)
+1. A running SQL server (SQLlite, MySQL etc...)
+
 
 ## Running it
 
@@ -70,17 +71,18 @@ field_colour varchar(255)
 
 *This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table*
 
-#### What is this "mapping"?
+#### mapping
 
-This mapping script simply converts the data in the import.io columns to the field names in your sql database
+This mapping field defines the mapping between the column names in import.io and the column names in your MySQL database
 
 ```
 "mapping": {
-	"image": "field_image",
-	"name": "field_name",
-	"price": "field_price",
-	"size": "field_size",
-	"colour": "field_colour"
+   	// import.io	// MySQL
+	"image": 	"field_image",
+	"name": 	"field_name",
+	"price": 	"field_price",
+	"size": 	"field_size",
+	"colour": 	"field_colour"
 }
 ```
 
