@@ -1,8 +1,8 @@
 {
 	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
 	"inputUrl": "http://owlkingdom.com",
-	"ioUserUUID": "[your user guid]",
-	"ioApiKey": "[your apikey]",
+	"ioUserID": "[your user guid]",
+	"ioAPIKey": "[your apikey]",
 
 	"table": "OMFGowls",
 	"database": "ILOVEOWLS",
