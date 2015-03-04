@@ -11,7 +11,7 @@ You will need to install the following:
 
 ## Running it
 
-To run it you have two option, but firstly you need to have your table and database ready
+To run it you have a few options, but firstly you need to have your table and database ready
 
 Run the following commands to set up the demo table:
 
@@ -32,7 +32,7 @@ field_colour varchar(255)
 
 ```
 
-### 1. Using a config script 
+### Using a config Script
 
 * Using this option you can set up a configuration that you can set up once and re-use to get the latest data into yours database table
 
@@ -86,8 +86,19 @@ This mapping field defines the mapping between the column names in import.io and
 }
 ```
 
+### Getting Data from Crawlers
 
-### 2. Using commandline options
+To get all the data from your crawl from import.io into your SQL database, you can use the **-c** option to turn on crawler mode.
+This will get the data from the last crawl snapshot and not directly query the crawler using an input url.
+
+(if you have settings in a config file, they will be loaded, but overwritten by anything you supply on the commandline)
+
+```
+importSQL -c -s "your crawler guid" [optional:-U [sql username] -P [sql password] -u [io user ID] -p [io API key]]
+```
+
+
+##### Using commandline options
 
 * When using just commandline options, be aware the the script will assume that the column names from import.io match the columns names in mysql
 
@@ -103,4 +114,5 @@ Here are the list of commandline options you can use:
 * **-u** import.io userID
 * **-p** import.io APIKey
 * **-s** source UUID
-* **-i** imput url for data source
+* **-i** input url for data source
+* **-c** flag to tell if the source you want data from is an uploaded crawl
