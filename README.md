@@ -34,7 +34,7 @@ field_colour varchar(255)
 
 ### Using a config Script
 
-* Using this option you can set up a configuration that you can set up once and re-use to get the latest data into yours database table
+* Using this you can set up a configuration that you can set up once and re-use to get the latest data into yours database table
 
 * Make sure you know your [import.io user credentials](https://import.io/data/account/)
 
@@ -71,7 +71,7 @@ field_colour varchar(255)
 
 *This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table*
 
-#### mapping
+### mapping
 
 This mapping field defines the mapping between the column names in import.io and the column names in your MySQL database
 
@@ -98,7 +98,7 @@ importSQL -c -s "your crawler guid" [optional:-U [sql username] -P [sql password
 ```
 
 
-##### Using commandline options
+### Using commandline options
 
 * When using just commandline options, be aware the the script will assume that the column names from import.io match the columns names in mysql
 
