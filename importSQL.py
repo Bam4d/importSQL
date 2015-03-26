@@ -97,8 +97,10 @@ def pushToSQL(configData, results):
 
 		print "Mappings: %s" % fieldMappings
 
+
+	con = None
 	try:
-		con = mdb.connect(configData["host"], configData["username"], configData["password"], configData["database"]);
+		con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], passwd=configData["password"], db=configData["database"]);
 		cur = con.cursor()
 
 		for result in results:
@@ -129,7 +131,7 @@ def pushToSQL(configData, results):
 
 		cur.close()
 
-	except mdb.Error, e:
+	except (RuntimeError, TypeError, NameError, mdb.Error) as e:
 		print "Error %d: %s" % (e.args[0],e.args[1])
 	finally:
 	  	if con:
