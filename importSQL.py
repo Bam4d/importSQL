@@ -20,7 +20,8 @@ def getRequiredConfigData(options,configData, configName):
 
 def getOptionalConfigData(options, configData, configName, default):
 	if options.__dict__[configName] is None:
-		configData[configName] = default
+		if default is not None:
+			configData[configName] = default
 	else:
 		configData[configName] = options.__dict__[configName]
 
@@ -39,8 +40,8 @@ def getConfigOptions(options, configData):
 	# Grab optional configuration parameters, use defaults if they don't exist
 	getOptionalConfigData(options, configData, "host", "localhost")
 	getOptionalConfigData(options, configData, "port", 3306)
-	getOptionalConfigData(options, configData, "username", "root")
-	getOptionalConfigData(options, configData, "password", "root")
+	getOptionalConfigData(options, configData, "username", None)
+	getOptionalConfigData(options, configData, "password", None)
 	getOptionalConfigData(options, configData, "crawl", False);
 
 	return configData
@@ -100,7 +101,10 @@ def pushToSQL(configData, results):
 
 	con = None
 	try:
-		con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], passwd=configData["password"], db=configData["database"]);
+		if "username" in configData:
+			con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], passwd=configData["password"], db=configData["database"])
+		else:
+			con = mdb.connect(host=configData["host"], port=configData["port"], db=configData["database"])
 		cur = con.cursor()
 
 		for result in results:
