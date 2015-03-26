@@ -130,9 +130,11 @@ def pushToSQL(configData, results):
 		cur.close()
 
 	except mdb.Error, e:
-	  	con.rollback()
 		print "Error %d: %s" % (e.args[0],e.args[1])
-		con.close()
+	finally:
+	  	if con:
+	  		con.rollback()
+			con.close()
 		sys.exit(1)
 
 def doImport(configData):
