@@ -101,10 +101,10 @@ def pushToSQL(configData, results):
 
 	con = None
 	try:
-		if "username" in configData:
+		if "password" in configData:
 			con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], passwd=configData["password"], db=configData["database"])
 		else:
-			con = mdb.connect(host=configData["host"], port=configData["port"], db=configData["database"])
+			con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], db=configData["database"])
 		cur = con.cursor()
 
 		for result in results:
