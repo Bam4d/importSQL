@@ -20,13 +20,15 @@ def getRequiredConfigData(options,configData, configName):
 
 def getOptionalConfigData(options, configData, configName, default):
 	if options.__dict__[configName] is None:
-		if default is not None:
+		if default is not None and configName not in configData:
 			configData[configName] = default
 	else:
 		configData[configName] = options.__dict__[configName]
 
 
 def getConfigOptions(options, configData): 
+
+	print configData
 
 	# Get required config data
 	getRequiredConfigData(options, configData, "sourceUUID")
@@ -134,6 +136,8 @@ def pushToSQL(configData, results):
 			con.commit()
 
 		cur.close()
+
+		print "%s:%s"  % (configData["host"], configData["port"])
 
 	except (RuntimeError, TypeError, NameError, mdb.Error) as e:
 		print "Error %d: %s" % (e.args[0],e.args[1])
