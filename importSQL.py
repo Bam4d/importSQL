@@ -117,13 +117,13 @@ def pushToSQL(configData, results):
 				# Get the values for each row based on the mapping that we supplied in config.json
 				for mapping in fieldMappings:
 					if result[mapping] is not None:
-						values.append("'"+result[mapping]+"'")
+						values.append("'"+str(result[mapping])+"'")
 			else:
 				# Get the values from the import.io source (assume the field names are identical)
 				sqlFieldMapping = [];
 				for key in result:
 					sqlFieldMapping.append(key.replace("/_","_"))
-					values.append("'"+result[key]+"'")
+					values.append("'"+str(result[key])+"'")
 				sqlFieldMappingString = ", ".join(sqlFieldMapping)
 
 
