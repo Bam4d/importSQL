@@ -9,194 +9,215 @@ import sys
 import zlib
 
 
-def getRequiredConfigData(options,configData, configName):
-	if configName not in options.__dict__ or options.__dict__[configName] is None:
-		if configName not in configData or configData[configName] is None:
-			print "Missing required option: " + configName
-			print "This option needs to be in a config file, or supplied on the commandline"
-			sys.exit(1)
-	else:
-		configData[configName] = options.__dict__[configName]
+def get_required_config_data(options, config_data, config_name):
+    if config_name not in options.__dict__ or options.__dict__[config_name] is None:
+        if config_name not in config_data or config_data[config_name] is None:
+            print "Missing required option: " + config_name
+            print "This option needs to be in a config file, or supplied on the commandline"
+            sys.exit(1)
+    else:
+        config_data[config_name] = options.__dict__[config_name]
 
-def getOptionalConfigData(options, configData, configName, default):
-	if options.__dict__[configName] is None:
-		if default is not None and configName not in configData:
-			configData[configName] = default
-	else:
-		configData[configName] = options.__dict__[configName]
-
-
-def getConfigOptions(options, configData): 
-
-	print configData
-
-	# Get required config data
-	getRequiredConfigData(options, configData, "sourceUUID")
-	getRequiredConfigData(options, configData, "table")
-	getRequiredConfigData(options, configData, "database")
-
-	getRequiredConfigData(options, configData, "ioAPIKey")
-	getRequiredConfigData(options, configData, "inputUrl")
-
-	# Grab optional configuration parameters, use defaults if they don't exist
-	getOptionalConfigData(options, configData, "host", "localhost")
-	getOptionalConfigData(options, configData, "port", 3306)
-	getOptionalConfigData(options, configData, "username", None)
-	getOptionalConfigData(options, configData, "password", None)
-	getOptionalConfigData(options, configData, "crawl", False);
-
-	return configData
-
-# Grab the data from a crawler snapshot
-def grabFromCrawlSnapshot(sourceUUID, ioAPIKey):
-	urlAuthParams = urllib.urlencode({"_apikey": ioAPIKey})
-
-	connectorUrl = 'https://api.import.io/store/data/' + sourceUUID + "?" + urlAuthParams
-	connectorResponse = json.loads(urllib2.urlopen(connectorUrl).read())
-	snapshotGuid = connectorResponse["snapshot"]
-
-	#Have to use gzip encoding for this
-	request = urllib2.Request('https://api.import.io/store/data/' + sourceUUID + "/_attachment/snapshot/" + snapshotGuid + "?" + urlAuthParams)
-	request.add_header('Accept-encoding', 'gzip')
-	response = urllib2.urlopen(request)
-	snapshotResponse = json.loads(zlib.decompress(response.read(), 16+zlib.MAX_WBITS))
-
-	crawledPages = snapshotResponse["tiles"][0]["results"][0]["pages"]
-
-	results = []
-
-	for page in crawledPages:
-		results.extend(page["results"])
-
-	return results
-	
+def get_optional_config_data(options, config_data, config_name, default):
+    if options.__dict__[config_name] is None:
+        if default is not None and config_name not in config_data:
+            config_data[config_name] = default
+    else:
+        config_data[config_name] = options.__dict__[config_name]
 
 
-# Grab the data from import.io
-def importRESTQuery(sourceUUID, inputUrl, ioAPIKey):
-	urlParams = urllib.urlencode({"input/webpage/url": inputUrl, "_apikey": ioAPIKey})
-	url = 'https://api.import.io/store/data/' + sourceUUID + '/_query?' + urlParams
+def getConfigOptions(options, config_data):
 
-	response = urllib2.urlopen(url).read()
-	return json.loads(response)["results"];
+    # Get required config data
+    get_required_config_data(options, config_data, "sourceUUID")
+    get_required_config_data(options, config_data, "table")
+    get_required_config_data(options, config_data, "database")
 
-# Convert the data to a reasonable format and stick it in SQL
-def pushToSQL(configData, results):
+    get_required_config_data(options, config_data, "ioAPIKey")
+    get_required_config_data(options, config_data, "inputUrl")
 
-	fieldMappings = None
+    # Grab optional configuration parameters, use defaults if they don't exist
+    get_optional_config_data(options, config_data, "host", "localhost")
+    get_optional_config_data(options, config_data, "port", 3306)
+    get_optional_config_data(options, config_data, "username", None)
+    get_optional_config_data(options, config_data, "password", None)
+    get_optional_config_data(options, config_data, "crawl", False);
 
-	if "mapping" not in configData:
-		print "Using default mapping from import.io data, assuming the field names are identical to the SQL field names"
-	else:
-		fieldMappings = configData["mapping"]
-		sqlFieldMapping = [];
-
-		for mapping in fieldMappings:
-			sqlFieldMapping.append(fieldMappings[mapping])
-
-		sqlFieldMappingString = ", ".join(sqlFieldMapping)
-		print sqlFieldMappingString
-
-		print "Mappings: %s" % fieldMappings
+    return config_data
 
 
-	con = None
-	try:
+def grab_from_crawl_snapshot(sourceUUID, ioAPIKey):
+    """
+    Grab the data from a crawler snapshot
+    :param sourceUUID:
+    :param ioAPIKey:
+    :return:
+    """
+    url_auth_params = urllib.urlencode({"_apikey": ioAPIKey})
 
-		print "Connecting to SQL server..."
+    connector_url = 'https://api.import.io/store/data/' + sourceUUID + "?" + url_auth_params
+    connector_response = json.loads(urllib2.urlopen(connector_url).read())
+    snapshot_guid = connector_response["snapshot"]
 
-		if "password" in configData:
-			con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], passwd=configData["password"], db=configData["database"])
-		else:
-			con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], db=configData["database"])
-		cur = con.cursor()
+    # Have to use gzip encoding for this
+    request = urllib2.Request(
+        'https://api.import.io/store/data/' + sourceUUID + "/_attachment/snapshot/" + snapshot_guid + "?" + url_auth_params)
+    request.add_header('Accept-encoding', 'gzip')
+    response = urllib2.urlopen(request)
+    snapshot_response = json.loads(zlib.decompress(response.read(), 16 + zlib.MAX_WBITS))
 
-		print "Connected!"
+    crawledPages = snapshot_response["tiles"][0]["results"][0]["pages"]
 
-		for result in results:
+    results = []
 
-			values = []
+    for page in crawledPages:
+        results.extend(page["results"])
 
-			if(fieldMappings is not None):
-				# Get the values for each row based on the mapping that we supplied in config.json
-				for mapping in fieldMappings:
-					if result[mapping] is not None:
-						values.append("'"+str(result[mapping])+"'")
-			else:
-				# Get the values from the import.io source (assume the field names are identical)
-				sqlFieldMapping = [];
-				for key in result:
-					sqlFieldMapping.append(key.replace("/_","_"))
-					values.append("'"+str(result[key])+"'")
-				sqlFieldMappingString = ", ".join(sqlFieldMapping)
+    return results
 
+def import_rest_query(sourceUUID, inputUrl, ioAPIKey):
+    """
+    Grab the data from import.io
+    :param sourceUUID:
+    :param inputUrl:
+    :param ioAPIKey:
+    :return:
+    """
+    urlParams = urllib.urlencode({"input/webpage/url": inputUrl, "_apikey": ioAPIKey})
+    url = 'https://api.import.io/store/data/' + sourceUUID + '/_query?' + urlParams
 
-			sqlFieldValuesString = ", ".join(values)
-			print "row data: %s" % sqlFieldValuesString
-
-		   	queryString = "INSERT INTO " + configData["table"] + " (" + sqlFieldMappingString + ") VALUES("+sqlFieldValuesString+");"
-
-			cur.execute(queryString)
-			con.commit()
-
-		cur.close()
-
-		print "%s:%s"  % (configData["host"], configData["port"])
-
-	except (RuntimeError, TypeError, NameError, mdb.Error) as e:
-		print "Error %d: %s" % (e.args[0],e.args[1])
-	finally:
-	  	if con:
-	  		con.rollback()
-			con.close()
-		sys.exit(1)
-
-def doImport(configData):
-
-	if configData["crawl"] == True:
-		results = grabFromCrawlSnapshot(configData["sourceUUID"], configData["ioAPIKey"])
-	else:
-		results = importRESTQuery(configData["sourceUUID"], configData["inputUrl"], configData["ioAPIKey"]);
-	print "Recieved %d rows of data" % (len(results))
-	pushToSQL(configData, results)
-
-parser = OptionParser()
-
-# Get the config options from the commandline
-
-# Import.io setup info
-parser.add_option("-p", "--ioapikey", dest="ioAPIKey", help="Your import.io API key")
-parser.add_option("-i", "--input", dest="inputUrl", help="The input url for the extractor")
-parser.add_option("-s", "--sourceUUID", dest="sourceUUID", help="The data source you wish to grab data from and put it in a table")
-parser.add_option("-c", "--crawl", action="store_true", dest="crawl", help="flag for if this information is stored in a crawler")
-
-# MySQL setup info
-parser.add_option("-U", "--username", dest="username", help="Your mysql username")
-parser.add_option("-P", "--password", dest="password", help="Your mysql password")
-parser.add_option("-t", "--table", dest="table", help="The name of the table you wish to import the data into")
-parser.add_option("-d", "--database", dest="database", help="The name fo the mysql database that you wish to import your data into")
-parser.add_option("-H", "--host", dest="host", help="The mysql host")
-parser.add_option("-E", "--port", dest="port", help="The mysql port")
-
-(options, args) = parser.parse_args()
-
-configData = {}
-configData["username"] = options.username;
-configData["password"] = options.password;
-configData["ioAPIKey"] = options.ioAPIKey;
-
-# Check if we have a config file: If we do, USE IT
-try:
-	configDataFile=open('config.json')
-	configData = json.load(configDataFile)
-	configDataFile.close()
-	print "CONFIG FOUND, YAY!"
-except IOError:
-	print 'NO CONFIG FILE FOUND, going to use defaults', 'config.json'
-
-#Do the call to import and push it out to the sql database in the configuration file
-configData = getConfigOptions(options, configData)
-doImport(configData)
+    response = urllib2.urlopen(url).read()
+    return json.loads(response)["results"];
 
 
+def push_to_sql(config_data, results):
+    """
+    Convert the data to a reasonable format and stick it in SQL
+    :param config_data:
+    :param results:
+    :return:
+    """
+    field_mappings = None
 
+    if "mapping" not in config_data:
+        print "Using default mapping from import.io data, assuming the field names are identical to the SQL field names"
+    else:
+        field_mappings = config_data["mapping"]
+        sql_field_mapping = [];
+
+        for mapping in field_mappings:
+            sql_field_mapping.append(field_mappings[mapping])
+
+        sql_field_mapping_string = ", ".join(sql_field_mapping)
+        print sql_field_mapping_string
+
+        print "Mappings: %s" % field_mappings
+
+    con = None
+    try:
+
+        print "Connecting to SQL server..."
+
+        if "password" in config_data:
+            if "username" not in config_data:
+                print "Missing username! You need to place a username in your config.json or supply it on the commandline"
+            con = mdb.connect(host=config_data["host"], port=config_data["port"], user=config_data["username"],
+                              passwd=config_data["password"], db=config_data["database"])
+        else:
+            con = mdb.connect(host=config_data["host"], port=config_data["port"],
+                              db=config_data["database"])
+        cur = con.cursor()
+
+        print "Connected!"
+
+        for result in results:
+
+            values = []
+
+            if (field_mappings is not None):
+                # Get the values for each row based on the mapping that we supplied in config.json
+                for mapping in field_mappings:
+                    if result[mapping] is not None:
+                        values.append("'" + str(result[mapping]) + "'")
+            else:
+                # Get the values from the import.io source (assume the field names are identical)
+                sql_field_mapping = [];
+                for key in result:
+                    sql_field_mapping.append(key.replace("/_", "_"))
+                    values.append("'" + str(result[key]) + "'")
+                sql_field_mapping_string = ", ".join(sql_field_mapping)
+
+            sql_field_values_string = ", ".join(values)
+            print "row data: %s" % sql_field_values_string
+
+            query_string = "INSERT INTO " + config_data[
+                "table"] + " (" + sql_field_mapping_string + ") VALUES(" + sql_field_values_string + ");"
+
+            cur.execute(query_string)
+            con.commit()
+
+        cur.close()
+
+        print "%s:%s" % (config_data["host"], config_data["port"])
+
+    except (RuntimeError, TypeError, NameError, mdb.Error) as e:
+        print "Error %d: %s" % (e.args[0], e.args[1])
+    except BaseException as e:
+        print "Error when connecting to sql server: %s" % e
+    finally:
+        if con:
+            con.rollback()
+            con.close()
+        sys.exit(1)
+
+
+def do_import(configData):
+    if configData["crawl"] == True:
+        results = grab_from_crawl_snapshot(configData["sourceUUID"], configData["ioAPIKey"])
+    else:
+        results = import_rest_query(configData["sourceUUID"], configData["inputUrl"], configData["ioAPIKey"]);
+    print "Recieved %d rows of data" % (len(results))
+    push_to_sql(configData, results)
+
+
+if __name__ == "__main__":
+    parser = OptionParser()
+
+    # Get the config options from the commandline
+
+    # Import.io setup info
+    parser.add_option("-p", "--ioapikey", dest="ioAPIKey", help="Your import.io API key")
+    parser.add_option("-i", "--input", dest="inputUrl", help="The input url for the extractor")
+    parser.add_option("-s", "--sourceUUID", dest="sourceUUID",
+                      help="The data source you wish to grab data from and put it in a table")
+    parser.add_option("-c", "--crawl", action="store_true", dest="crawl",
+                      help="flag for if this information is stored in a crawler")
+
+    # MySQL setup info
+    parser.add_option("-U", "--username", dest="username", help="Your mysql username")
+    parser.add_option("-P", "--password", dest="password", help="Your mysql password")
+    parser.add_option("-t", "--table", dest="table", help="The name of the table you wish to import the data into")
+    parser.add_option("-d", "--database", dest="database",
+                      help="The name fo the mysql database that you wish to import your data into")
+    parser.add_option("-H", "--host", dest="host", help="The mysql host")
+    parser.add_option("-E", "--port", dest="port", help="The mysql port")
+
+    (options, args) = parser.parse_args()
+
+    config_data = {}
+    config_data["username"] = options.username;
+    config_data["password"] = options.password;
+    config_data["ioAPIKey"] = options.ioAPIKey;
+
+    # Check if we have a config file: If we do, USE IT
+    try:
+        config_data_file = open('config.json')
+        config_data = json.load(config_data_file)
+        config_data_file.close()
+        print "CONFIG FOUND, YAY!"
+    except IOError:
+        print 'NO CONFIG FILE FOUND, going to use defaults', 'config.json'
+
+    # Do the call to import and push it out to the sql database in the configuration file
+    config_data = getConfigOptions(options, config_data)
+    do_import(config_data)
