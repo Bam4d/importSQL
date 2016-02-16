@@ -45,7 +45,6 @@ field_colour varchar(255)
 	// Config for import.io
 	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
 	"inputUrl": "http://owlkingdom.com",
-	"ioUserID": "[your User ID]",
 	"ioAPIKey": "[your API key]",
 
 	// Config for mysql
@@ -67,7 +66,7 @@ field_colour varchar(255)
 ```
 
 * Put it in the same directory as your importSQL script.
-* RUN IT! `importSQL [optional:-U [sql username] -P [sql password] -u [io user ID] -p [io API key]]`
+* RUN IT! `importSQL [optional:-U [sql username] -P [sql password] -p [io API key]]`
 
 *This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table*
 
@@ -94,7 +93,7 @@ This will get the data from the last crawl snapshot and not directly query the c
 (if you have settings in a config file, they will be loaded, but overwritten by anything you supply on the commandline)
 
 ```
-importSQL -c -s "your crawler guid" [optional:-U [sql username] -P [sql password] -u [io user ID] -p [io API key]]
+importSQL -c -s "your crawler guid" [optional:-U [sql username] -P [sql password] -p [io API key]]
 ```
 
 
@@ -111,7 +110,6 @@ Here are the list of commandline options you can use:
 * **-t** mysql table name
 * **-d** mysql database name
 
-* **-u** import.io userID
 * **-p** import.io APIKey
 * **-s** source UUID
 * **-i** input url for data source

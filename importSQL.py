@@ -10,8 +10,8 @@ import zlib
 
 
 def getRequiredConfigData(options,configData, configName):
-	if options.__dict__[configName] is None:
-		if configData[configName] is None:
+	if configName not in options.__dict__ or options.__dict__[configName] is None:
+		if configName not in configData or configData[configName] is None:
 			print "Missing required option: " + configName
 			print "This option needs to be in a config file, or supplied on the commandline"
 			sys.exit(1)
@@ -35,7 +35,6 @@ def getConfigOptions(options, configData):
 	getRequiredConfigData(options, configData, "table")
 	getRequiredConfigData(options, configData, "database")
 
-	getRequiredConfigData(options, configData, "ioUserID")
 	getRequiredConfigData(options, configData, "ioAPIKey")
 	getRequiredConfigData(options, configData, "inputUrl")
 
@@ -49,8 +48,8 @@ def getConfigOptions(options, configData):
 	return configData
 
 # Grab the data from a crawler snapshot
-def grabFromCrawlSnapshot(sourceUUID, ioUserID, ioAPIKey):
-	urlAuthParams = urllib.urlencode({"_user": ioUserID, "_apikey": ioAPIKey})
+def grabFromCrawlSnapshot(sourceUUID, ioAPIKey):
+	urlAuthParams = urllib.urlencode({"_apikey": ioAPIKey})
 
 	connectorUrl = 'https://api.import.io/store/data/' + sourceUUID + "?" + urlAuthParams
 	connectorResponse = json.loads(urllib2.urlopen(connectorUrl).read())
@@ -74,8 +73,8 @@ def grabFromCrawlSnapshot(sourceUUID, ioUserID, ioAPIKey):
 
 
 # Grab the data from import.io
-def importRESTQuery(sourceUUID, inputUrl, ioUserID, ioAPIKey):
-	urlParams = urllib.urlencode({"input/webpage/url": inputUrl, "_user": ioUserID, "_apikey": ioAPIKey})
+def importRESTQuery(sourceUUID, inputUrl, ioAPIKey):
+	urlParams = urllib.urlencode({"input/webpage/url": inputUrl, "_apikey": ioAPIKey})
 	url = 'https://api.import.io/store/data/' + sourceUUID + '/_query?' + urlParams
 
 	response = urllib2.urlopen(url).read()
@@ -103,11 +102,16 @@ def pushToSQL(configData, results):
 
 	con = None
 	try:
+
+		print "Connecting to SQL server..."
+
 		if "password" in configData:
 			con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], passwd=configData["password"], db=configData["database"])
 		else:
 			con = mdb.connect(host=configData["host"], port=configData["port"], user=configData["username"], db=configData["database"])
 		cur = con.cursor()
+
+		print "Connected!"
 
 		for result in results:
 
@@ -150,9 +154,9 @@ def pushToSQL(configData, results):
 def doImport(configData):
 
 	if configData["crawl"] == True:
-		results = grabFromCrawlSnapshot(configData["sourceUUID"], configData["ioUserID"], configData["ioAPIKey"])
+		results = grabFromCrawlSnapshot(configData["sourceUUID"], configData["ioAPIKey"])
 	else:
-		results = importRESTQuery(configData["sourceUUID"], configData["inputUrl"], configData["ioUserID"], configData["ioAPIKey"]);
+		results = importRESTQuery(configData["sourceUUID"], configData["inputUrl"], configData["ioAPIKey"]);
 	print "Recieved %d rows of data" % (len(results))
 	pushToSQL(configData, results)
 
@@ -161,7 +165,6 @@ parser = OptionParser()
 # Get the config options from the commandline
 
 # Import.io setup info
-parser.add_option("-u", "--iouserid", dest="ioUserID", help="Your import.io user ID")
 parser.add_option("-p", "--ioapikey", dest="ioAPIKey", help="Your import.io API key")
 parser.add_option("-i", "--input", dest="inputUrl", help="The input url for the extractor")
 parser.add_option("-s", "--sourceUUID", dest="sourceUUID", help="The data source you wish to grab data from and put it in a table")
@@ -180,7 +183,6 @@ parser.add_option("-E", "--port", dest="port", help="The mysql port")
 configData = {}
 configData["username"] = options.username;
 configData["password"] = options.password;
-configData["ioUserID"] = options.ioUserID;
 configData["ioAPIKey"] = options.ioAPIKey;
 
 # Check if we have a config file: If we do, USE IT
