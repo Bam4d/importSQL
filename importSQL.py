@@ -34,7 +34,7 @@ def getConfigOptions(options, config_data):
     get_required_config_data(options, config_data, "database")
 
     get_required_config_data(options, config_data, "ioAPIKey")
-    get_required_config_data(options, config_data, "inputUrl")
+    get_required_config_data(options, config_data, "inputUrls")
 
     # Grab optional configuration parameters, use defaults if they don't exist
     get_optional_config_data(options, config_data, "host", "localhost")
@@ -175,7 +175,9 @@ def do_import(configData):
     if configData["crawl"] == True:
         results = grab_from_crawl_snapshot(configData["sourceUUID"], configData["ioAPIKey"])
     else:
-        results = import_rest_query(configData["sourceUUID"], configData["inputUrl"], configData["ioAPIKey"]);
+        results = []
+        for inputUrl in configData["inputUrls"]:
+            results = results + import_rest_query(configData["sourceUUID"], inputUrl, configData["ioAPIKey"]);
     print "Recieved %d rows of data" % (len(results))
     push_to_sql(configData, results)
 
@@ -187,7 +189,7 @@ if __name__ == "__main__":
 
     # Import.io setup info
     parser.add_option("-p", "--ioapikey", dest="ioAPIKey", help="Your import.io API key")
-    parser.add_option("-i", "--input", dest="inputUrl", help="The input url for the extractor")
+    parser.add_option("-i", "--input", dest="inputUrls", help="The input url for the extractor")
     parser.add_option("-s", "--sourceUUID", dest="sourceUUID",
                       help="The data source you wish to grab data from and put it in a table")
     parser.add_option("-c", "--crawl", action="store_true", dest="crawl",
