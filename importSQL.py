@@ -87,7 +87,7 @@ def import_rest_query(sourceUUID, inputUrl, ioAPIKey):
     url = 'https://api.import.io/store/data/' + sourceUUID + '/_query?' + urlParams
 
     response = urllib2.urlopen(url).read()
-    return json.loads(response)["results"];
+    return json.loads(response)["results"]
 
 
 def push_to_sql(config_data, results):
@@ -103,7 +103,7 @@ def push_to_sql(config_data, results):
         print "Using default mapping from import.io data, assuming the field names are identical to the SQL field names"
     else:
         field_mappings = config_data["mapping"]
-        sql_field_mapping = [];
+        sql_field_mapping = []
 
         for mapping in field_mappings:
             sql_field_mapping.append(field_mappings[mapping])
@@ -138,13 +138,13 @@ def push_to_sql(config_data, results):
                 # Get the values for each row based on the mapping that we supplied in config.json
                 for mapping in field_mappings:
                     if result[mapping] is not None:
-                        values.append("'" + str(result[mapping]) + "'")
+                        values.append("'" + unicode(result[mapping]) + "'")
             else:
                 # Get the values from the import.io source (assume the field names are identical)
                 sql_field_mapping = [];
                 for key in result:
                     sql_field_mapping.append(key.replace("/_", "_"))
-                    values.append("'" + str(result[key]) + "'")
+                    values.append("'" + unicode(result[key]) + "'")
                 sql_field_mapping_string = ", ".join(sql_field_mapping)
 
             sql_field_values_string = ", ".join(values)
@@ -153,7 +153,7 @@ def push_to_sql(config_data, results):
             query_string = "INSERT INTO " + config_data[
                 "table"] + " (" + sql_field_mapping_string + ") VALUES(" + sql_field_values_string + ");"
 
-            cur.execute(query_string)
+            cur.execute(unicode(query_string).encode("utf-8"))
             con.commit()
 
         cur.close()
@@ -161,7 +161,7 @@ def push_to_sql(config_data, results):
         print "%s:%s" % (config_data["host"], config_data["port"])
 
     except (RuntimeError, TypeError, NameError, mdb.Error) as e:
-        print "Error %d: %s" % (e.args[0], e.args[1])
+        print "Error %s: %s" % (e.args[0], e.args[1])
     except BaseException as e:
         print "Error when connecting to sql server: %s" % e
     finally:
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 
     # Import.io setup info
     parser.add_option("-p", "--ioapikey", dest="ioAPIKey", help="Your import.io API key")
-    parser.add_option("-i", "--input", dest="inputUrl", help="The input url for the extractor")
+    parser.add_option("-i", "--inputURL", dest="inputUrl", help="The input url for the extractor")
     parser.add_option("-s", "--sourceUUID", dest="sourceUUID",
                       help="The data source you wish to grab data from and put it in a table")
     parser.add_option("-c", "--crawl", action="store_true", dest="crawl",

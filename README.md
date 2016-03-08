@@ -28,7 +28,8 @@ field_name varchar(255),
 field_price varchar(255),
 field_size varchar(255),
 field_colour varchar(255)
-);
+) DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
 
 ```
 
