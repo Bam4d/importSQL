@@ -18,7 +18,10 @@ Run the following commands to set up the demo table:
 mysql>
 
 ```
-CREATE DATABASE ILOVEOWLS DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;;
+CREATE DATABASE ILOVEOWLS 
+    DEFAULT CHARACTER SET utf8 
+    DEFAULT COLLATE utf8_general_ci;
+    
 USE ILOVEOWLS;
 
 CREATE TABLE OMFGowls
