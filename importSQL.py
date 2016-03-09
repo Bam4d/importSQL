@@ -122,10 +122,10 @@ def push_to_sql(config_data, results):
             if "username" not in config_data:
                 print "Missing username! You need to place a username in your config.json or supply it on the commandline"
             con = mdb.connect(host=config_data["host"], port=config_data["port"], user=config_data["username"],
-                              passwd=config_data["password"], db=config_data["database"])
+                              passwd=config_data["password"], db=config_data["database"], charset='utf8')
         else:
             con = mdb.connect(host=config_data["host"], port=config_data["port"],
-                              db=config_data["database"])
+                              db=config_data["database"], charset='utf8')
         cur = con.cursor()
 
         print "Connected!"
@@ -147,13 +147,12 @@ def push_to_sql(config_data, results):
                     values.append("'" + unicode(result[key]) + "'")
                 sql_field_mapping_string = ", ".join(sql_field_mapping)
 
-            sql_field_values_string = ", ".join(values)
-            print "row data: %s" % sql_field_values_string
+            print "Row data: %s" % ', '.join(values)
 
             query_string = "INSERT INTO " + config_data[
-                "table"] + " (" + sql_field_mapping_string + ") VALUES(" + sql_field_values_string + ");"
+                "table"] + " (" + sql_field_mapping_string + ") VALUES(" + ', '.join(["%s" for i in values]) + ");"
 
-            cur.execute(unicode(query_string).encode("utf-8"))
+            cur.execute(query_string, values)
             con.commit()
 
         cur.close()
@@ -161,7 +160,7 @@ def push_to_sql(config_data, results):
         print "%s:%s" % (config_data["host"], config_data["port"])
 
     except (RuntimeError, TypeError, NameError, mdb.Error) as e:
-        print "Error %s: %s" % (e.args[0], e.args[1])
+        print "Error %s: " % e
     except BaseException as e:
         print "Error when connecting to sql server: %s" % e
     finally:
