@@ -44,7 +44,7 @@ def getConfig():
 
     # Import.io setup info
     parser.add_option("-p", "--ioapikey", dest="ioAPIKey", help="Your import.io API key")
-    parser.add_option("-i", "--input", dest="inputUrl", help="The input url for the extractor")
+    parser.add_option("-i", "--input", dest="inputUrls", help="The input url for the extractor")
     parser.add_option("-s", "--sourceUUID", dest="sourceUUID",
                       help="The data source you wish to grab data from and put it in a table")
     parser.add_option("-c", "--crawl", action="store_true", dest="crawl",
@@ -60,9 +60,6 @@ def getConfig():
     parser.add_option("-E", "--port", dest="port", help="The mysql port")
 
     (options, args) = parser.parse_args()
-
-    # transform inputUrl to an Array
-    options.inputUrls=[options.inputUrl]
 
     config_data = {}
     config_data["username"] = options.username;
