@@ -10,6 +10,7 @@
 	"host": "localhost",
 	"port": 3306,
 	
+        "addDate": true,
 	"mapping": {
 		"image": "field_image",
 		"name": "field_name",
