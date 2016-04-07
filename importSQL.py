@@ -1,13 +1,13 @@
 #!/usr/bin/env python2
 
-import MySQLdb as mdb
 import json
 import urllib2
 import urllib
 import sys
 import zlib
 
-from config import getConfig
+from config_handler import getConfig
+from sql_handler import insert_into_db
 
 
 
@@ -68,87 +68,6 @@ def import_rest_query(sourceUUID, inputUrl, ioAPIKey):
         return response_json["results"];
 
 
-def push_to_sql(config_data, results):
-    """
-    Convert the data to a reasonable format and stick it in SQL
-    :param config_data:
-    :param results:
-    :return:
-    """
-    field_mappings = None
-
-    if "mapping" not in config_data:
-        print "Using default mapping from import.io data, assuming the field names are identical to the SQL field names"
-    else:
-        field_mappings = config_data["mapping"]
-        sql_field_mapping = [];
-
-        for mapping in field_mappings:
-            sql_field_mapping.append(field_mappings[mapping])
-
-        sql_field_mapping_string = ", ".join(sql_field_mapping)
-        print sql_field_mapping_string
-
-        print "Mappings: %s" % field_mappings
-
-    con = None
-    try:
-
-        print "Connecting to SQL server..."
-
-        if "password" in config_data:
-            if "username" not in config_data:
-                print "Missing username! You need to place a username in your config.json or supply it on the commandline"
-            con = mdb.connect(host=config_data["host"], port=config_data["port"], user=config_data["username"],
-                              passwd=config_data["password"], db=config_data["database"])
-        else:
-            con = mdb.connect(host=config_data["host"], port=config_data["port"],
-                              db=config_data["database"])
-        cur = con.cursor()
-
-        print "Connected!"
-
-        for result in results:
-
-            values = []
-
-            if (field_mappings is not None):
-                # Get the values for each row based on the mapping that we supplied in config.json
-                for mapping in field_mappings:
-                    if result[mapping] is not None:
-                        values.append("'" + str(result[mapping]) + "'")
-            else:
-                # Get the values from the import.io source (assume the field names are identical)
-                sql_field_mapping = [];
-                for key in result:
-                    sql_field_mapping.append(key.replace("/_", "_"))
-                    values.append("'" + str(result[key]) + "'")
-                sql_field_mapping_string = ", ".join(sql_field_mapping)
-
-            sql_field_values_string = ", ".join(values)
-            print "row data: %s" % sql_field_values_string
-
-            query_string = "INSERT INTO " + config_data[
-                "table"] + " (" + sql_field_mapping_string + ") VALUES(" + sql_field_values_string + ");"
-
-            cur.execute(query_string)
-            con.commit()
-
-        cur.close()
-
-        print "%s:%s" % (config_data["host"], config_data["port"])
-
-    except (RuntimeError, TypeError, NameError, mdb.Error) as e:
-        print "Error %d: %s" % (e.args[0], e.args[1])
-    except BaseException as e:
-        print "Error when connecting to sql server: %s" % e
-    finally:
-        if con:
-            con.rollback()
-            con.close()
-        sys.exit(1)
-
-
 def do_import(configData):
     if configData["crawl"] == True:
         results = grab_from_crawl_snapshot(configData["sourceUUID"], configData["ioAPIKey"])
@@ -157,13 +76,13 @@ def do_import(configData):
         for inputUrl in configData["inputUrls"]:
             results = results + import_rest_query(configData["sourceUUID"], inputUrl, configData["ioAPIKey"]);
     print "Recieved %d rows of data" % (len(results))
-    push_to_sql(configData, results)
+    insert_into_db(configData, results)
 
 
 if __name__ == "__main__":
 
     config_data = getConfig()
 
-    print "Using this config" + config_data
+    print "Using this config", config_data
 
     do_import(config_data)
