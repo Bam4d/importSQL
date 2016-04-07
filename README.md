@@ -32,6 +32,28 @@ field_colour varchar(255)
 
 ```
 
+There is now support for a date field created at Script execution. The user needs to add a date field to the Table.
+
+The above example would look like this:
+
+mysql>
+
+```
+CREATE DATABASE ILOVEOWLS;
+USE ILOVEOWLS;
+
+CREATE TABLE OMFGowls
+(
+field_image varchar(255),
+field_name varchar(255),
+field_price varchar(255),
+field_size varchar(255),
+field_colour varchar(255),
+date DATE
+);
+
+```
+
 ### Using a config Script
 
 * Using this you can set up a configuration that you can set up once and re-use to get the latest data into yours database table
@@ -55,6 +77,7 @@ field_colour varchar(255)
 	"username": "root",
 	"password": "root",
  
+        "addDate": true,
 	"mapping": {
 		"image": "field_image",
 		"name": "field_name",
@@ -97,7 +120,9 @@ importSQL -c -s "your crawler guid" [optional:-U [sql username] -P [sql password
 ```
 
 
-### Using commandline options
+### Using commandline options 
+
+#### This version of importSQL supports multiple inputUrls. Support is already added to config.json but not to the cli options. also addDate is currently missing
 
 * When using just commandline options, be aware the the script will assume that the column names from import.io match the columns names in mysql
 

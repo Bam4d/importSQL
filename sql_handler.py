@@ -1,3 +1,4 @@
+import datetime
 import MySQLdb as mdb
 
 def insert_into_db(config_data, results):
@@ -28,6 +29,9 @@ def insert_into_db(config_data, results):
                 sql_field_mapping.append(key.replace("/_", "_"))
                 values.append("'" + str(result[key]) + "'")
 
+        if "addDate" in config_data and config_data["addDate"]:
+            sql_field_mapping.append("date")
+            values.append("'"+datetime.datetime.now().isoformat().split('T')[0]+"'")
 
         sql_field_mapping_string = ", ".join(sql_field_mapping)
 
