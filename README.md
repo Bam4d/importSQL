@@ -54,6 +54,15 @@ date DATE
 
 ```
 
+To add the date field to an already existing Table use the following command
+
+```
+
+ALTER TABLE OMFGowls ADD COLUMN date DATE;
+
+```
+
+
 ### Using a config Script
 
 * Using this you can set up a configuration that you can set up once and re-use to get the latest data into yours database table
