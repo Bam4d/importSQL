@@ -36,29 +36,9 @@ field_colour varchar(255)
 
 ```
 
-The above example would look like this:
-
-mysql>
-
-```
-CREATE DATABASE ILOVEOWLS;
-USE ILOVEOWLS;
-
-CREATE TABLE OMFGowls
-(
-field_image varchar(255),
-field_name varchar(255),
-field_price varchar(255),
-field_size varchar(255),
-field_colour varchar(255),
-) DEFAULT CHARACTER SET utf8
-  DEFAULT COLLATE utf8_general_ci;
-
-```
-
 #### Timestamps
 
-To add the a timestamp field to an already existing Table use the following command:
+To add the a timestamp field to an already existing table, use the following command:
 
 ```
 
@@ -90,7 +70,7 @@ ALTER TABLE OMFGowls ADD COLUMN timestamp BIGINT;
 	"username": "root",
 	"password": "root",
  
-    "addTimestamp": true,
+        "addTimestamp": true,
 	"mapping": {
 		"image": "field_image",
 		"name": "field_name",
