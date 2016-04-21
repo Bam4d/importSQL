@@ -1,20 +1,14 @@
 {
 	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
-	"inputUrl": "http://owlkingdom.com",
-	"ioAPIKey": "[your apikey]",
+	"inputUrls": ["http://owlkingdom.com","http://owlkingdom.com"],
+	"ioAPIKey": "1defec2878574cf5afbc257b605d7785f2f88367d9e40b074b9df6cf936dafafef17b7788c2bfd5ae630f9f4eb812223aff77e2849db36a43ff1e3fe8210a94f621f8aa71754bb746904dbb925fc159f",
 
-	"table": "OMFGowls",
-	"database": "ILOVEOWLS",
-	"username": "root",
-	"password": "root",
+	"table": "testtable",
+	"database": "testdb",
 	"host": "localhost",
-	"port": 3306,
+	"port": 1433,
+	"username": "root",
+	"password": "root"
 	
-	"mapping": {
-		"image": "field_image",
-		"name": "field_name",
-		"price": "field_price",
-		"size": "field_size",
-		"colour": "field_colour"
-	}
+    "addDate": true,
 }

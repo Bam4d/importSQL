@@ -36,6 +36,37 @@ field_colour varchar(255)
 
 ```
 
+The above example would look like this:
+
+mysql>
+
+```
+CREATE DATABASE ILOVEOWLS;
+USE ILOVEOWLS;
+
+CREATE TABLE OMFGowls
+(
+field_image varchar(255),
+field_name varchar(255),
+field_price varchar(255),
+field_size varchar(255),
+field_colour varchar(255),
+) DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
+
+```
+
+#### Timestamps
+
+To add the a timestamp field to an already existing Table use the following command:
+
+```
+
+ALTER TABLE OMFGowls ADD COLUMN timestamp BIGINT;
+
+```
+
+
 ### Using a config Script
 
 * Using this you can set up a configuration that you can set up once and re-use to get the latest data into yours database table
@@ -48,7 +79,7 @@ field_colour varchar(255)
 {
 	// Config for import.io
 	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
-	"inputUrl": "http://owlkingdom.com",
+	"inputUrls": ["http://owlkingdom.com","http://owlkingdom.com"],
 	"ioAPIKey": "[your API key]",
 
 	// Config for mysql
@@ -59,6 +90,7 @@ field_colour varchar(255)
 	"username": "root",
 	"password": "root",
  
+    "addTimestamp": true,
 	"mapping": {
 		"image": "field_image",
 		"name": "field_name",
@@ -74,7 +106,7 @@ field_colour varchar(255)
 
 *This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table*
 
-### mapping
+### Mapping
 
 This mapping field defines the mapping between the column names in import.io and the column names in your MySQL database
 
@@ -101,7 +133,7 @@ importSQL -c -s "your crawler guid" [optional:-U [sql username] -P [sql password
 ```
 
 
-### Using commandline options
+### Using commandline options 
 
 * When using just commandline options, be aware the the script will assume that the column names from import.io match the columns names in mysql
 
@@ -113,8 +145,9 @@ Here are the list of commandline options you can use:
 * **-E** mysql port number _(default: 3306)_
 * **-t** mysql table name
 * **-d** mysql database name
+* **-T** add timestamp
 
 * **-p** import.io APIKey
 * **-s** source UUID
-* **-i** input url for data source
+* **-i** input urls for data source (can use multiple here)
 * **-c** flag to tell if the source you want data from is an uploaded crawl
