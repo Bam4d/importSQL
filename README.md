@@ -126,7 +126,6 @@ Here are the list of commandline options you can use:
 * **-t** mysql table name
 * **-d** mysql database name
 * **-T** add timestamp
-
 * **-p** import.io APIKey
 * **-s** source UUID
 * **-i** input urls for data source (can use multiple here)

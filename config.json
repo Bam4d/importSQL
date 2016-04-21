@@ -1,23 +1,21 @@
 {
-	// Config for import.io
-	"sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
-	"inputUrls": ["http://owlkingdom.com","http://owlkingdom.com"],
-	"ioAPIKey": "[your API key]",
+    "sourceUUID": "94cdc938-c24e-42db-b94f-3fb852c450a9",
+    "inputUrls": ["http://owlkingdom.com","http://owlkingdom.com"],
+    "ioAPIKey": "[your API key]",
 
-	// Config for mysql
-	"table": "OMFGowls",
-	"database": "ILOVEOWLS",
-	"host": "localhost",
-	"port": 3306,
-	"username": "root",
-	"password": "root",
- 
-        "addTimestamp": true,
-	"mapping": {
-		"image": "field_image",
-		"name": "field_name",
-		"price": "field_price",
-		"size": "field_size",
-		"colour": "field_colour"
-	}
+    "table": "OMFGowls",
+    "database": "ILOVEOWLS", 
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "root",
+
+    "addTimestamp": true,
+    "mapping": {
+        "image": "field_image",
+        "name": "field_name",
+        "price": "field_price",
+        "size": "field_size",
+        "colour": "field_colour"
+    }
 }
