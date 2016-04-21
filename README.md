@@ -36,8 +36,6 @@ field_colour varchar(255)
 
 ```
 
-There is now support for a date field created at Script execution. The user needs to add a date field to the Table.
-
 The above example would look like this:
 
 mysql>
@@ -53,17 +51,18 @@ field_name varchar(255),
 field_price varchar(255),
 field_size varchar(255),
 field_colour varchar(255),
-date DATE
 ) DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
 
 ```
 
-To add the date field to an already existing Table use the following command
+#### Timestamps
+
+To add the a timestamp field to an already existing Table use the following command:
 
 ```
 
-ALTER TABLE OMFGowls ADD COLUMN date DATE;
+ALTER TABLE OMFGowls ADD COLUMN timestamp BIGINT;
 
 ```
 
@@ -91,7 +90,7 @@ ALTER TABLE OMFGowls ADD COLUMN date DATE;
 	"username": "root",
 	"password": "root",
  
-        "addDate": true,
+    "addTimestamp": true,
 	"mapping": {
 		"image": "field_image",
 		"name": "field_name",
@@ -107,7 +106,7 @@ ALTER TABLE OMFGowls ADD COLUMN date DATE;
 
 *This json file above will grab the owls from [Owl Kingdom](http://owlkingdom.com) and put them into your SQL table*
 
-### mapping
+### Mapping
 
 This mapping field defines the mapping between the column names in import.io and the column names in your MySQL database
 
@@ -136,8 +135,6 @@ importSQL -c -s "your crawler guid" [optional:-U [sql username] -P [sql password
 
 ### Using commandline options 
 
-#### This version of importSQL supports multiple inputUrls. Support is already added to config.json but not to the cli options. also addDate is currently missing
-
 * When using just commandline options, be aware the the script will assume that the column names from import.io match the columns names in mysql
 
 Here are the list of commandline options you can use:
@@ -148,8 +145,9 @@ Here are the list of commandline options you can use:
 * **-E** mysql port number _(default: 3306)_
 * **-t** mysql table name
 * **-d** mysql database name
+* **-T** add timestamp
 
 * **-p** import.io APIKey
 * **-s** source UUID
-* **-i** input url for data source
+* **-i** input urls for data source (can use multiple here)
 * **-c** flag to tell if the source you want data from is an uploaded crawl

@@ -2,14 +2,13 @@
 
 import json
 import urllib2
+from urllib2 import URLError
 import urllib
 import sys
 import zlib
 
 from config_handler import getConfig
 from sql_handler import insert_into_db
-
-
 
 
 def grab_from_crawl_snapshot(sourceUUID, ioAPIKey):
