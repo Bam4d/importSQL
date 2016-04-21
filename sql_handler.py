@@ -1,5 +1,6 @@
-import datetime
+import time
 import MySQLdb as mdb
+
 
 def insert_into_db(config_data, results):
     """
@@ -29,26 +30,20 @@ def insert_into_db(config_data, results):
                 sql_field_mapping.append(key.replace("/_", "_"))
                 values.append(result[mapping])
 
-        if "addDate" in config_data and config_data["addDate"]:
-            sql_field_mapping.append("date")
-            values.append(datetime.datetime.now().isoformat().split('T')[0])
+        if "addTimestamp" in config_data and config_data["addTimestamp"]:
+            sql_field_mapping.append("timestamp")
+            values.append(int(time.time()*1000))
 
-        
-        # creates ( %s, %s, %s ) with the right amount of %s
+        # Creates ( %s, %s, %s ) with the right amount of %s
         sql_sequence = "( %s"
         for sql_field in sql_field_mapping[1:]:
             sql_sequence += ", %s "
         sql_sequence += ")"
 
-
         sql_field_mapping_string = ", ".join(sql_field_mapping)
-        
-        print sql_field_mapping_string, values
 
-        query_string = "INSERT INTO " + config_data["table"] + " (" + sql_field_mapping_string + ") VALUES" + sql_sequence + ";"
-
-        config_data["table"]
-        print query_string
+        query_string = "INSERT INTO " + config_data[
+                "table"] + " (" + sql_field_mapping_string + ") VALUES(" + ', '.join(["%s" for i in values]) + ");"
 
         cur.execute(query_string, values)
         con.commit()
@@ -57,11 +52,6 @@ def insert_into_db(config_data, results):
 
     print "%s:%s" % (config_data["host"], config_data["port"])
 
-    # finally:
-    #     if con:
-    #         con.rollback()
-    #         con.close()
-    #     sys.exit(1)
 
 def connect_to_db(host, port, username, password, database):
     try:
